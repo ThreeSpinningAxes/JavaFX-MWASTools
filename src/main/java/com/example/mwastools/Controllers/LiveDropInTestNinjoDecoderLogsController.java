@@ -92,7 +92,7 @@ public class LiveDropInTestNinjoDecoderLogsController {
             channelToSendCommandsToRemoteDocker.connect();
             //wait 100 milliseconds to capture the processID of the remote script as the remote script itself
             //prints its own PID in stdout. Needed to kill script afterwards.
-            Thread.sleep(100);
+            Thread.sleep(250);
             this.ProcessIDForRemoteGetLogsScript = scriptOutputStream.toString(StandardCharsets.UTF_8);
         }
 

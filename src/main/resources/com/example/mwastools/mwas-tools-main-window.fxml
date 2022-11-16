@@ -34,13 +34,13 @@
                         <TextField fx:id="mantisUserNameField" layoutX="31.0" layoutY="46.0" onAction="#autoSaveMantisUsername" AnchorPane.leftAnchor="31.0" AnchorPane.topAnchor="46.0" />
                         <Text layoutX="31.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter your mantis username" wrappingWidth="157.0" AnchorPane.leftAnchor="31.0" AnchorPane.topAnchor="30.0" />
                         <Text layoutX="247.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Selected config files" AnchorPane.rightAnchor="247.61328125" AnchorPane.topAnchor="22.05078125" />
-                        <CheckBox fx:id="pushToStabilityCheck" layoutX="247.0" layoutY="339.0" mnemonicParsing="false" text="Push to stability" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="248.0" />
-                        <Button fx:id="clearTableUpdaterLogsButton" layoutX="385.0" layoutY="335.0" mnemonicParsing="false" onAction="#clearTableUpdaterLogs" prefHeight="25.0" prefWidth="72.0" text="Clear Logs" AnchorPane.bottomAnchor="11.0" AnchorPane.rightAnchor="143.0" />
+                        <CheckBox fx:id="requestPushToStabilityCheckBox" layoutX="246.0" layoutY="331.0" mnemonicParsing="false" text="Request Push to Stability" AnchorPane.bottomAnchor="23.0" AnchorPane.rightAnchor="201.0" />
+                        <Button fx:id="clearTableUpdaterLogsButton" layoutX="485.0" layoutY="327.0" mnemonicParsing="false" onAction="#clearTableUpdaterLogs" prefHeight="25.0" prefWidth="72.0" text="Clear Logs" AnchorPane.bottomAnchor="19.0" AnchorPane.rightAnchor="43.0" />
                      </children>
                   </AnchorPane>
                </content>
             </Tab>
-          <Tab text="Docker Dropin Tester">
+          <Tab text="Docker Drop-in Tester">
                <content>
                   <AnchorPane prefHeight="400.0" prefWidth="600.0">
                      <children>

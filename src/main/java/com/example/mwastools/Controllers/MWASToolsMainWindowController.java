@@ -10,7 +10,7 @@ import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
-import com.example.mwastools.APIHandlers.MantisAutoMessage;
+import com.example.mwastools.APIs.MantisAutoMessage;
 import com.example.mwastools.MWASToolsApplication;
 import com.example.mwastools.UtilityClasses.GeneralUtils;
 import com.example.mwastools.UtilityClasses.NetorkUtility.ReturnPayload;
@@ -44,15 +44,15 @@ import static com.example.mwastools.UtilityClasses.NetorkUtility.NetworkHelpers.
 import static com.example.mwastools.UtilityClasses.NetorkUtility.SessionInstance.isSessionAlive;
 
 /**
- * This class handles all the events that occur on the main window (including events on all different tabs)
+ * This class handles all the events that occur on the main window (including events on all different tabs).
  */
 
 public class MWASToolsMainWindowController {
 
-    /** ----------------------------------- CONFIGURATION ----------------------------------------------------------*/
+    /* ----------------------------------- CONFIGURATION ----------------------------------------------------------*/
     private final PropertiesConfiguration properties = new PropertiesConfiguration("application.properties");
 
-    /** ------------------------------------ DIRECTORIES ------------------------------------------------------- */
+    /* ------------------------------------ DIRECTORIES ------------------------------------------------------- */
     private final String USER_PROFILE = System.getenv("USERPROFILE");
 
     /** List of directories where the config table files are on the docker */
@@ -68,7 +68,7 @@ public class MWASToolsMainWindowController {
 
     private final String DOWNLOAD_DIR = USER_PROFILE + "\\Downloads\\";
 
-    /** ----------------------------------- BACKEND VARIABLES -------------------------------------------------- */
+    /* ----------------------------------- BACKEND VARIABLES -------------------------------------------------- */
     private String mantisIssueNumber;
 
     private String mantisUsername;
@@ -77,10 +77,10 @@ public class MWASToolsMainWindowController {
 
     private File dropInTestFile;
 
-    /** Controller object that handles the events on the live Ninjo-decoder logs window for the drop in testing */
+    /* Controller object that handles the events on the live Ninjo-decoder logs window for the drop in testing */
     public LiveDropInTestNinjoDecoderLogsController ninjoLogsTabController;
 
-    /** ----------------------JAVAFX CONFIG TABLE UPDATE TAB INTERFACE COMPONENTS -------------------------------*/
+    /* ----------------------JAVAFX CONFIG TABLE UPDATE TAB INTERFACE COMPONENTS -------------------------------*/
     @FXML
     private TextField mantisIssueNumberField = new TextField();
 
@@ -123,7 +123,7 @@ public class MWASToolsMainWindowController {
     private Button seeNinjoDecoderWarp3Logs;
 
     @FXML
-    private CheckBox pushToStabilityCheck;
+    private CheckBox requestPushToStabilityCheckBox;
 
     @FXML
     private Button clearTableUpdaterLogsButton;
@@ -189,16 +189,17 @@ public class MWASToolsMainWindowController {
             return;
         }
 
-        // perform sftp of config table files to docker. Fail is status code returns -1
+        // perform sftp of config table files to docker. Fail if status code returns -1
         if (performSFTPOfConfigFilesToDocker(session) == -1) {
             return;
         }
 
-        logsOfConfigTableUpdateTab.getItems().add("Updated docker tables.");
+        logsOfConfigTableUpdateTab.getItems().add("Updated config tables on docker.");
         restartComponents();
 
-        if (pushToStabilityCheck.isSelected()) {
+        if (requestPushToStabilityCheckBox.isSelected()) {
 
+            //Need username and issue number to construct mantis note
             autoSaveMantisUsername();
             autoSaveMantisIssueNumber();
 
@@ -214,7 +215,7 @@ public class MWASToolsMainWindowController {
             }
 
             executeGITPushOnDockerOfConfigTableChangesAndAutomateMantisNote(session);
-            logsOfConfigTableUpdateTab.getItems().add("Done");
+            logsOfConfigTableUpdateTab.getItems().add("Finished push to stability script");
         }
     }
 
@@ -250,12 +251,12 @@ public class MWASToolsMainWindowController {
 
     private void executeGITPushOnDockerOfConfigTableChangesAndAutomateMantisNote(Session session) {
         String command = "(cd /apps/dms/configTableScripts/scripts/; sh automateConfigTableUpdatePush.sh "
-            + mantisIssueNumber + " 2>&1 &)";
+            + mantisIssueNumber + " 2>&1)";
         logsOfConfigTableUpdateTab.getItems().add("---------PUSH TO STABILITY LOGS----------");
         ReturnPayload automateGitPushScriptOutput = executeCommand(session, command, logsOfConfigTableUpdateTab, true);
         logsOfConfigTableUpdateTab.getItems().add(automateGitPushScriptOutput.stdout);
         if (automateGitPushScriptOutput.exitCode != 0) {
-            logsOfConfigTableUpdateTab.getItems().add("ERROR: Pushing to stability failed. Check logs for info.");
+            logsOfConfigTableUpdateTab.getItems().add("ERROR: Requesting pushing to stability failed. Check logs for info.");
             return;
         }
         sendAutomatedMessageOfConfigUpdateToMantisPage(true, logsOfConfigTableUpdateTab);
@@ -274,8 +275,10 @@ public class MWASToolsMainWindowController {
             mantisBot = new MantisAutoMessage(mantisIssueNumber, mantisUsername, pushToStability,
                 selectedConfigTableFiles, logs,
                 properties);
-            logs.getItems().add("Send table update message to mantis");
-            mantisBot.sendPOSTAPIRequestToWriteAutomatedMantisNote();
+            // if request succeeded
+            if (mantisBot.sendPOSTAPIRequestToWriteAutomatedMantisNote()) {
+                logs.getItems().add("Sent table update message to mantis");
+            }
         }
         catch (ConfigurationException e) {
             GeneralUtils.showErrorPopup(e.getMessage());
@@ -292,8 +295,8 @@ public class MWASToolsMainWindowController {
         FileChooser fc = new FileChooser();
         fc.setInitialDirectory(new File(DOWNLOAD_DIR));
         fc.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("Excel Sheet", "*.xlsx"),
-            new FileChooser.ExtensionFilter("Text Files", "*.txt")
+            new FileChooser.ExtensionFilter("Text Files", "*.txt"),
+            new FileChooser.ExtensionFilter("Excel Sheet", "*.xlsx")
         );
 
         List<File> selectedConfigF = fc.showOpenMultipleDialog(null);
@@ -347,7 +350,7 @@ public class MWASToolsMainWindowController {
     }
 
     /**
-     * Saves whatever the user types in the mantis username text box into the properties file after pressing enter
+     * Saves whatever the user types in the mantis username text box into the properties file after pressing enter.
      */
     @FXML
     public void saveMantisUsernameFromUserInput(ActionEvent e) throws ConfigurationException {
@@ -452,7 +455,7 @@ public class MWASToolsMainWindowController {
     }
 
     /**
-     * Opens a window that shows the live logs of the drop test.
+     * Opens a window that shows the live logs of ninjo-decoder after performing the drop test.
      */
     @FXML
     public void getNinjoDecoderWarp3Logs(ActionEvent e) throws IOException {
@@ -466,7 +469,7 @@ public class MWASToolsMainWindowController {
     private void buildNinjoDecoderDropInTestLogWindow() throws IOException {
         if (logWindow == null || !logWindow.isShowing()) {
 
-            FXMLLoader loader = new FXMLLoader(MWASToolsApplication.class.getResource("ninjo-live-logs-controller.fxml"));
+            FXMLLoader loader = new FXMLLoader(MWASToolsApplication.class.getResource("ninjo-live-logs-window-controller.fxml"));
             Parent root = loader.load();
             LiveDropInTestNinjoDecoderLogsController controller = loader.getController();
             this.ninjoLogsTabController = controller;

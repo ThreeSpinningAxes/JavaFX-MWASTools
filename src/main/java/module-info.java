@@ -19,6 +19,6 @@ module com.example.mwastools {
     opens com.example.mwastools.Controllers to javafx.fxml;
     exports com.example.mwastools.UtilityClasses.NetorkUtility;
     opens com.example.mwastools.UtilityClasses.NetorkUtility to javafx.fxml;
-    exports com.example.mwastools.APIHandlers;
-    opens com.example.mwastools.APIHandlers to javafx.fxml;
+    exports com.example.mwastools.APIs;
+    opens com.example.mwastools.APIs to javafx.fxml;
 }

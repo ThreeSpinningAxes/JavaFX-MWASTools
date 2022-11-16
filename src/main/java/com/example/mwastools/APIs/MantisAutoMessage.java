@@ -1,4 +1,4 @@
-package com.example.mwastools.APIHandlers;
+package com.example.mwastools.APIs;
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,6 +23,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 
+/**
+ * This class describes how the mantis note describing config table updates is constructed and sent
+ */
 public class MantisAutoMessage {
 
     private final PropertiesConfiguration properties = null;
@@ -30,8 +33,7 @@ public class MantisAutoMessage {
     private final String BASE_SOAP_API_URL_FOR_MANTIS = "https://dms-zeus.cmc.ec.gc" +
         ".ca/mantis-dms/api/soap/mantisconnect.php";
 
-    private final String MANTIS_ADD_NOTE_REQUEST_URL = "https://dms-zeus.cmc.ec.gc" +
-        ".ca/mantis-dms/api/soap/mantisconnect.php/mc_issue_note_add";
+    private final String MANTIS_ADD_NOTE_REQUEST_URL = "https://dms-zeus.cmc.ec.gc.ca/mantis-dms/api/soap/mantisconnect.php/mc_issue_note_add";
 
     private String MANTIS_BOT_PASS;
 
@@ -60,28 +62,47 @@ public class MantisAutoMessage {
     }
 
     /**
-     * Sends the POST request to the Mantis SOAP API to create a mantis note regarding the config table updates
+     * Sends a POST request to the Mantis SOAP API to create a mantis note regarding the config table updates
      */
-    public void sendPOSTAPIRequestToWriteAutomatedMantisNote() {
+    public boolean sendPOSTAPIRequestToWriteAutomatedMantisNote() {
         try {
             String POSTRequestBody = buildPOSTRequestBody();
-            HttpRequest postRequest = HttpRequest.newBuilder()
-                .uri(new URI(BASE_SOAP_API_URL_FOR_MANTIS))
-                .header("Content-Type", "text/xml; charset=UTF-8")
-                .header("SOAPAction", MANTIS_ADD_NOTE_REQUEST_URL)
-                .POST(HttpRequest.BodyPublishers.ofString(POSTRequestBody))
-                .build();
-
-            HttpClient client = HttpClient.newHttpClient();
-            client.send(postRequest, HttpResponse.BodyHandlers.ofString());
+            if (POSTRequestBody == null) {
+                return false;
+            }
+            HttpRequest POSTRequest = buildPostRequest(POSTRequestBody);
+            sendPOSTRequest(POSTRequest);
+            return true;
         }
         catch (URISyntaxException | IOException | InterruptedException e) {
             logs.getItems().add("Error automating mantis note submission: " + e.getMessage());
             logs.getItems().add("Mantis note may have not been sent");
+            return false;
         }
-
     }
 
+    /**
+     *
+     * Builds the Http POST request that will be sent to the Mantis API
+     */
+    private HttpRequest buildPostRequest(String POSTRequestBody) throws URISyntaxException {
+        HttpRequest POSTRequest = HttpRequest.newBuilder()
+            .uri(new URI(BASE_SOAP_API_URL_FOR_MANTIS))
+            .header("Content-Type", "text/xml; charset=UTF-8")
+            .header("SOAPAction", MANTIS_ADD_NOTE_REQUEST_URL)
+            .POST(HttpRequest.BodyPublishers.ofString(POSTRequestBody))
+            .build();
+        return POSTRequest;
+    }
+
+    private void sendPOSTRequest(HttpRequest POSTRequest) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        client.send(POSTRequest, HttpResponse.BodyHandlers.ofString());
+    }
+
+    /**
+     * Fetches the outline of the POST request body from a XML file
+     */
     private String getMantisAPIRequestSendNoteFormat() {
         try {
             String mantisPostRequestBodyFormat = IOUtils.toString(MWASToolsMainWindowController.class.getClassLoader()
@@ -97,6 +118,10 @@ public class MantisAutoMessage {
         }
     }
 
+
+    /**
+     * Creates the text content for the note being sent
+     */
     private String buildMantisNote() {
         StringBuilder note = new StringBuilder();
         note.append("Config Table Update" + '\n');
@@ -117,9 +142,15 @@ public class MantisAutoMessage {
         return note.toString();
     }
 
+    /**
+     * Fills in the POST request XML body that is going to be sent to the Mantis API with the correct text fields.
+     */
     @FXML
     public String buildPOSTRequestBody() {
         StringBuilder POSTRequestBodyBuilder = new StringBuilder(getMantisAPIRequestSendNoteFormat());
+        if (POSTRequestBodyBuilder.toString().isEmpty()) {
+            return null;
+        }
         ArrayList<String> inputInfo = getInputFieldsForPOSTRequestBody();
 
         // The post request format string has "?" that marks areas where you need to replace "?"
@@ -131,6 +162,9 @@ public class MantisAutoMessage {
         return POSTRequestBodyBuilder.toString();
     }
 
+    /**
+     * Gets a list of all the info needed to be added to the POST request XML
+     */
     private ArrayList<String> getInputFieldsForPOSTRequestBody() {
         ArrayList<String> input = new ArrayList<>();
         input.add(MANTIS_BOT_USER);
