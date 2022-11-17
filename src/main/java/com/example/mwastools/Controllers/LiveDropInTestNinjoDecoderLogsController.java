@@ -78,7 +78,7 @@ public class LiveDropInTestNinjoDecoderLogsController {
 
         private void setChannelToExecuteGetLiveLogsScriptOnDocker(ChannelExec channelToSendCommandsToRemoteDocker) {
             String executeGetLiveLogsScript =
-                "cd /apps/dms/configTableScripts/scripts; sh ninjoDecoderwarp3Logs.sh";
+                "cd ; sh ninjoDecoderwarp3Logs.sh";
             channelToSendCommandsToRemoteDocker.setCommand(executeGetLiveLogsScript);
         }
 
