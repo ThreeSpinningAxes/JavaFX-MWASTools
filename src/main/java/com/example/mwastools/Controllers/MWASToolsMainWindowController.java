@@ -224,7 +224,7 @@ public class MWASToolsMainWindowController {
      */
     private void restartComponents() {
         logsOfConfigTableUpdateTab.getItems().add("Attempting to restart components on docker...");
-        String command = "(cd /apps/dms/configTableScripts/scripts/; sh restart_components.sh > /dev/null 2>&1 &)";
+        String command = "(cd ; sh restart_components.sh > /dev/null 2>&1 &)";
         ReturnPayload p = executeCommand(SessionInstance.getInstance().getSession(), command,
             logsOfConfigTableUpdateTab, false);
         logsOfConfigTableUpdateTab.getItems().add("Restarting components on docker (takes 5-8 minutes to complete)");
@@ -250,7 +250,7 @@ public class MWASToolsMainWindowController {
     }
 
     private void executeGITPushOnDockerOfConfigTableChangesAndAutomateMantisNote(Session session) {
-        String command = "(cd /apps/dms/configTableScripts/scripts/; sh automateConfigTableUpdatePush.sh "
+        String command = "(cd ; sh automateConfigTableUpdatePush.sh "
             + mantisIssueNumber + " 2>&1)";
         logsOfConfigTableUpdateTab.getItems().add("---------PUSH TO STABILITY LOGS----------");
         ReturnPayload automateGitPushScriptOutput = executeCommand(session, command, logsOfConfigTableUpdateTab, true);
@@ -443,7 +443,7 @@ public class MWASToolsMainWindowController {
     }
 
     private ReturnPayload executeSingleRunBashScriptToPerformDropTest(Session session) {
-        String performDropTestCommand = "(cd /apps/dms/mwas-autoissuer/; sh single-run.sh)";
+        String performDropTestCommand = "(cd ; sh single-run.sh)";
         return executeCommand(session, performDropTestCommand, logsDropIn, true);
     }
 
