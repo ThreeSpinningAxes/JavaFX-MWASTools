@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #HOW TO USE
-  #1. Add new config tables to src/main/assembly/newConfigTables directory
+  #1. Add new config tables to "SOMEDIR" directory
   #2. Pass in the ticket number of the table changes on mantis as command line arguments to the bash script
 
 #CONCERNS:
@@ -18,13 +18,13 @@ if [ $# -eq 0 ]; then
 fi
 
 echo "Switching to config warnings repo directory"
-cd /apps/dms/configTableScripts/MSC-DMS-Config-Warnings-GIT-REPO/MSC-DMS-Config-Warnings || exit 1 
+cd "directory" || exit 1 
 
 git checkout develop -q
 echo "Pulling from git to get latest version of repo"
 git pull
 
-REMOTEDIR="feature/general/DMS-$1"
+REMOTEDIR="feature/general/-$1"
 
 echo "Verifying if another config update is taking place..."
 #checks to see if there is a outgoing mr for config table change. If yes, exit
@@ -36,18 +36,18 @@ fi
 echo "OK"
 
 echo "Checking if feature branch for table update already exists"
-if [ $(git rev-parse -q --verify "feature/general/DMS-$1") > /dev/null 2>&1 ]; then
-  git branch -D "feature/general/DMS-$1"
+if [ $(git rev-parse -q --verify "feature/general/$1") > /dev/null 2>&1 ]; then
+  git branch -D "feature/general/$1"
 fi
 
-git checkout -b "feature/general/DMS-$1"
+git checkout -b "feature/general/$1"
 
 # Three directories where all config table files can be replaced
 
-DIR1="src/main/config/warp3/"
-DIR2="src/main/config/warp3/alert-categories/"
+DIR1=""
+DIR2="/"
 
-NEWTABLEDIR="/apps/dms/configTableScripts/scripts/newConfigTables/"
+NEWTABLEDIR="/"
 
 # updates config files in their respective directories
 echo "Updating config files in git repo..."
@@ -63,18 +63,18 @@ for file in $NEWTABLEDIR*; do
         fi
 done
 
-rm /apps/dms/configTableScripts/scripts/newConfigTables/*
+rm "DIR"
 
 
-MRMESSAGE="@mwas-point-data https://dms-zeus.cmc.ec.gc.ca/mantis-dms/view.php?id=$1"
+MRMESSAGE="SOME MESSAGE"
 
 echo "Beginning pushing process of table update"
-git add src/main/config/.
+git add "".
 git status
 git commit -m "issue $1: Config table update"
 #git push origin -f feature/general/DMS-31728
-git push -o merge_request.create -o merge_request.remove_source_branch -o merge_request.description="$MRMESSAGE" --set-upstream origin "feature/general/DMS-$1"
+git push -o merge_request.create -o merge_request.remove_source_branch -o merge_request.description="$MRMESSAGE" --set-upstream origin "feature/general/$1"
 git checkout develop
-git branch -D "feature/general/DMS-$1"
+git branch -D "feature/general/$1"
 
 
