@@ -30,10 +30,9 @@ public class MantisAutoMessage {
 
     private final PropertiesConfiguration properties = null;
 
-    private final String BASE_SOAP_API_URL_FOR_MANTIS = "https://dms-zeus.cmc.ec.gc" +
-        ".ca/mantis-dms/api/soap/mantisconnect.php";
+    private final String BASE_SOAP_API_URL_FOR_MANTIS = "";
 
-    private final String MANTIS_ADD_NOTE_REQUEST_URL = "https://dms-zeus.cmc.ec.gc.ca/mantis-dms/api/soap/mantisconnect.php/mc_issue_note_add";
+    private final String MANTIS_ADD_NOTE_REQUEST_URL = "";
 
     private String MANTIS_BOT_PASS;
 
