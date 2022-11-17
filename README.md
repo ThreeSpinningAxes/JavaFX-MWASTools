@@ -1,5 +1,7 @@
 <h1>How this Application Works: </h1>
 
+NOTE: This application was deigned for ECCC and is not functional for non-ECCC employees.
+
 This application allows users to perform config table updates and drop-in tests via a simple GUI interface. It requires
 a VPN internet connection to the ECCC network otherwise it will not work. 
 
