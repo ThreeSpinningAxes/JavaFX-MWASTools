@@ -1,8 +1,8 @@
 #!/bin/bash
 
-DIR1="/apps/dms/dms-config/warnings/conf/"
-DIR2="/apps/dms/dms-config/warnings/conf/warp3/"
-DIR3="/apps/dms/dms-config/warnings/conf/warp3/alert-categories/"
+DIR1=
+DIR2=
+DIR3=
 
 NEWTABLEDIR="/apps/dms/temp/newConfigTables/"
 
