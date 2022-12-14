@@ -5,26 +5,10 @@
 This application allows users to perform config table updates and drop-in tests via a simple GUI interface. It requires
 a VPN internet connection to the ECCC network otherwise it will not work. 
 
-The MWASToolsApplication class serves as the starting point of execution (official main method). Here, the main window and all its
-GUI components are defined and constructed by loading a fxml file. 
-
-<h4>FXML</h4>
-FXML files are specific types of files that describe how exactly the GUI will look and what functions should be called 
-when interacting with the GUI's components. It is best to edit them with a application called "Scene Builder", which 
-simplifies the process of editing the GUI's functionality.
-
-<h4>CONTROLLER CLASS</h4>
-Each window (which is described with a fxml file) has its own controller class. A controller class handles all the events
-that occur for a specific window. For example, if I click a button on the main window, the controller class of the main 
-window will define what function should be executed in response to that button being pressed. 
-
-All three tabs (config table updater, docker drop-in test, ssh settings) are under the main window, so their 
-functionality and event handlers are defined in the main MWASToolsMainWindowController class.
-
 <h4>BASH SCRIPTS</h4>
 This application uses executes many different bash scripts remotely. All these scripts are found
 in the "HIDDEN" directory. The "HIDDEN" contains the username and
-email that is needed to automate the git push to stability feature. Change these values after my account terminates.
+email that is needed to automate the git push to stability feature.
 
 <h4>PROPERTIES FILE</H4>
 
