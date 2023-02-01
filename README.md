@@ -6,7 +6,7 @@ This application allows users to perform config table updates and drop-in tests 
 a VPN internet connection to the ECCC network otherwise it will not work. 
 
 <h4>BASH SCRIPTS</h4>
-This application uses executes many different bash scripts remotely. All these scripts are found
+This application uses many different bash scripts remotely. All these scripts are found
 in the "HIDDEN" directory. The "HIDDEN" contains the username and
 email that is needed to automate the git push to stability feature.
 
